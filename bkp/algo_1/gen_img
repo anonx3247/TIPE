@@ -1,0 +1,3 @@
+#!/bin/sh
+python3.10 imgify.py grid.csv
+python3.10 imgify.py T.csv

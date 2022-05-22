@@ -1,0 +1,6 @@
+#!/bin/sh
+amount=$1
+for i in $(seq 1 $amount)
+do
+    ./traj.py py_tests/grid$i.csv py_tests/traj$i.csv
+done
