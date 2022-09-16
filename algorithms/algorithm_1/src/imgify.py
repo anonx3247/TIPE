@@ -5,11 +5,11 @@ import sys, os
 # constants for directions of movement
 pos = 1
 neg = -1
-bidir = 0
+bidir = 9
 block = 7
-traj = 8
+traj = 3
 addr_col = 5
-bkg = 9
+bkg = 0
 directions = (pos, neg, bidir)
 
 

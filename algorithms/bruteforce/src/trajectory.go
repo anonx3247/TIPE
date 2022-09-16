@@ -32,8 +32,9 @@ type Matrix struct {
 }
 
 type PathTree struct {
-	root     int
-	children []PathTree
+	root              int
+	children          []PathTree
+	lengthsToChildren []float32
 }
 
 func blankMatrix(size int) (grid *Matrix) {
@@ -117,9 +118,11 @@ func (m Matrix) ToStringList() [][]string {
 	return S
 }
 
-func genPathTree(start int, addr []Point, visited []int) (paths PathTree) {
+func genPathTree(start int, addr []Point, visited []int, adj [][]float32) (paths PathTree) {
 	paths.root = start
-	paths.children = make([]PathTree, len(addr))
+	paths.children = make([]PathTree, len(addr)-len(visited))
+	paths.lengthsToChildren = make([]float32, len(addr)-len(visited))
+	fmt.Println(len(paths.children), len(addr))
 
 	isInside := func(a int, b []int) bool {
 		k := false
@@ -131,17 +134,31 @@ func genPathTree(start int, addr []Point, visited []int) (paths PathTree) {
 		return k
 	}
 
-	for i := range addr {
-		if isInside(i, visited) {
-			nowVisited := append(visited, i)
-			subPaths := genPathTree(i, addr, nowVisited)
-			paths.children[i] = subPaths
+	if len(paths.children) == 0 {
+		fmt.Println("no children")
+		return
+	} else {
+		iterator := 0
+		for i := range addr {
+			if !isInside(i, visited) {
+				fmt.Println("Is not inside:", i)
+				fmt.Println("visited:", visited)
+				newVisited := append(visited, i)
+				subPaths := genPathTree(i, addr, newVisited, adj)
+				paths.children[iterator] = subPaths
+				paths.lengthsToChildren[iterator] = adj[start][i]
+				iterator += 1
+			}
 		}
+		return
 	}
-	return
+
 }
 
-func getMinimumPath(paths PathTree, adj [][]float32) (length float32, path []int) {
+func getMinimumPath(root PathTree) (float32, []int) {
+
+	pathInit := make([]int, 1)
+	pathInit[0] = root.root
 
 	min := func(l []float32) (float32, int) {
 		min := l[0]
@@ -155,26 +172,19 @@ func getMinimumPath(paths PathTree, adj [][]float32) (length float32, path []int
 		return min, index
 	}
 
-	if len(paths.children) == 0 {
-		path := make([]int, 1)
-		path[0] = paths.root
-		return float32(0), path
-	} else if len(paths.children) == 1 {
-		path := make([]int, 2)
-		path[0] = paths.root
-		path[1] = paths.children[0].root
-		return adj[paths.root][paths.children[0].root], path
+	if len(root.children) == 0 {
+		return float32(0), pathInit
 	} else {
 		lengths := make([]float32, 0)
 		subPaths := make([][]int, 0)
-		for i := range paths.children {
-			len, path := getMinimumPath(paths.children[i], adj)
+		for _, child := range root.children {
+			len, path := getMinimumPath(child)
+
 			lengths = append(lengths, len)
 			subPaths = append(subPaths, path)
 		}
 		length, index := min(lengths)
-		path := subPaths[index]
-		return length, path
+		return length + root.lengthsToChildren[index], append(pathInit, subPaths[index]...)
 	}
 }
 

@@ -89,13 +89,21 @@ func MatrixFromCSV(r csv.Reader) (m *Matrix) {
 func setParams(grid *Matrix) (trails []Direction, c bool) {
 	start := Point{0, 0}
 	addr := grid.Addr()
+	printOrder(addr)
 	adj := adjacencyMatrix(addr)
+	printAdj(adj)
 	visited := make([]int, 0)
-	paths := genPathTree(-1, addr, visited)
-	length, ord := getMinimumPath(paths, adj)
-	printOrder(ord)
-	trails = trail(append([]Point{start}, ord...))
+	paths := genPathTree(-1, addr, visited, adj)
+	fmt.Println(paths)
+	length, ord := getMinimumPath(paths)
+	order := make([]Point, len(ord))
+	for i, index := range ord[1:] {
+		order[i] = addr[index]
+	}
+	printOrder(order)
+	trails = trail(append([]Point{start}, order...))
 	printTrails(trails)
+	fmt.Println("length =", length)
 	return
 }
 
@@ -120,7 +128,7 @@ func printOrder(ord []Point) {
 func handleInput(f *os.File) {
 	w3 := csv.NewWriter(f)
 	fmt.Println("Generating city...")
-	m := genCity(50, 12)
+	m := genCity(50, 4)
 	m.ToCSV(*w3)
 	//f.Close()
 }
@@ -139,4 +147,15 @@ func handleOutput(iFile *os.File, oFile *os.File) (grid *Matrix) {
 	grid.ToCSV(*w)
 	fmt.Println("Trajectory length:", grid.MeasureTrajectory())
 	return
+}
+
+func printAdj(adj [][]float32) {
+	s := ""
+	for _, line := range adj {
+		s += fmt.Sprintln("")
+		for _, elem := range line {
+			s += fmt.Sprint(" ", elem)
+		}
+	}
+	fmt.Println(s)
 }

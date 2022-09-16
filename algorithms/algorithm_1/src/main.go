@@ -105,7 +105,7 @@ func handleInput(f *os.File, e error) {
 		panic(e)
 	}
 	w3 := csv.NewWriter(f)
-	m := genCity(50, 25)
+	m := genCity(200, 100)
 	m.ToCSV(*w3)
 	f.Close()
 }
