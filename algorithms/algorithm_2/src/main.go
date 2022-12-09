@@ -11,7 +11,12 @@ func main() {
 
 	iPath := os.Args[1]
 	oPath := os.Args[2]
+	n, e := strconv.Atoi(os.Args[3])
 
+	if e != nil {
+		panic("not a number")
+	}
+	
 	handlePath := func(path string, rw string) (*os.File, bool) {
 		created := true
 		_, check := os.Stat(path)
@@ -46,7 +51,7 @@ func main() {
 
 	iFile, created := handlePath(iPath, "r")
 	if !created {
-		handleInput(iFile)
+		handleInput(iFile, n)
 	}
 
 	oFile, _ := handlePath(oPath, "w")
@@ -117,10 +122,10 @@ func printOrder(ord []Point) {
 	fmt.Println(s)
 }
 
-func handleInput(f *os.File) {
+func handleInput(f *os.File, n int) {
 	w3 := csv.NewWriter(f)
 	fmt.Println("Generating city...")
-	m := genCity(200, 100)
+	m := genCity(200, n)
 	m.ToCSV(*w3)
 	//f.Close()
 }

@@ -13,7 +13,11 @@ func main() {
 	oCreated := true
 	iPath := os.Args[1]
 	oPath := os.Args[2]
+	n, e := strconv.Atoi(os.Args[3])
 
+	if e != nil {
+		panic("invalid number")
+	}
 	_, iCheckExists := os.Stat(iPath)
 
 	if iCheckExists != nil {
@@ -31,7 +35,7 @@ func main() {
 		//handleInput(f3, err3)
 	} else {
 		f3, err3 := os.Create(iPath)
-		handleInput(f3, err3)
+		handleInput(f3, err3, n)
 	}
 
 	if oCreated {
@@ -99,13 +103,13 @@ func printOrder(ord []Point) {
 	fmt.Println(s)
 }
 
-func handleInput(f *os.File, e error) {
+func handleInput(f *os.File, e error, n int) {
 	if e != nil {
 		fmt.Println("error on file write: input")
 		panic(e)
 	}
 	w3 := csv.NewWriter(f)
-	m := genCity(200, 100)
+	m := genCity(200, n)
 	m.ToCSV(*w3)
 	f.Close()
 }
