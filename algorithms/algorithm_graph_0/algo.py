@@ -1,6 +1,8 @@
 # from matlpotlib import pyplot as plt
 import numpy as np
 import osmnx as ox
+from heapq import *
+from math import inf
 import matplotlib.pyplot as plt
 
 # G = ox.graph_from_place("Saint Germain en Laye, France")
@@ -73,6 +75,46 @@ class Graph:
         lst = [self.members[j] for j in L]
         return ox.plot_graph_routes(self.graph, [[self.members[i]], lst])
 
+    def djikstra(self, sommet):
+        distances = [(inf, i, None) for i in range(self.size)]
+        distances[sommet] = (0, sommet, sommet)
+        heap = []
+        for i in range(self.size):
+            heappush(heap, distances[i])
+        non_vus = [True for i in self.adj]
+        sommet_actuel = sommet
+        dist_actuelle = 0
+        while True in non_vus:
+            dist_actuelle, sommet_actuel, origine = heappop(heap)
+            if dist_actuelle == inf:
+                break
+            distances[sommet_actuel] = (dist_actuelle, sommet_actuel, origine)
+            voisins = self.voisins_a_traiter(sommet_actuel, non_vus)
+            for voisin in voisins:
+                heappush(heap, (dist_actuelle + self.adj[sommet_actuel,voisin], voisin, sommet_actuel))
+            non_vus[sommet_actuel] = False
+
+        return distances
+
+    def voisins_a_traiter(self, sommet, non_vus):
+        v = []
+        for i in range(self.size):
+            if self.adj[sommet,i] != 0 and non_vus[i]:
+                v.append(i)
+        return v
+
+    def chemin(self, i, j):
+        dists = self.djikstra(i)
+        if dists[j][0] == inf:
+            return (inf, [])
+        else:
+            actuel = j
+            c = [j]
+            while actuel != i:
+                c.append(dists[actuel][2])
+                actuel = dists[actuel][2]
+                print(actuel)
+            return (dists[j], c)
 
 def graph_from_ox(G) -> Graph:
     members = [i for i in G.nodes]
