@@ -107,6 +107,16 @@ class Graph:
         x = [i[0] for i in coords]
         y = [i[1] for i in coords]
         bkg = ox.plot_graph(self.graph, show=False)
+        plt.plot(x, y, color = 'green')
+
+    def plot_path(self, path: list):
+        """
+        affiche les noeuds sur l'image du graphe
+        """
+        coords = self.coordinates(pts=path)
+        x = [i[0] for i in coords]
+        y = [i[1] for i in coords]
+        bkg = ox.plot_graph(self.graph, show=False)
         plt.plot(x, y,
                 color = 'red',
                 linestyle = 'solid',
@@ -221,17 +231,7 @@ class Graph:
                 c.append(self.dists_from[i][actuel][2])
                 actuel = self.dists_from[i][actuel][2]
             if show:
-                coords = self.coordinates(pts=c)
-                x = [i[0] for i in coords]
-                y = [i[1] for i in coords]
-                bkg = ox.plot_graph(self.graph, show=False)
-                plt.plot(x, y,
-                        color = 'red',
-                        linestyle = 'solid',
-                        marker = 'o')
-                ix, iy = self.coordinates(i)
-                jx, jy = self.coordinates(j)
-                plt.scatter([ix, jx], [iy, jy], color = 'blue')
+                self.plot_path(c)
             else:
                 return (self.dists_from[i][j][0], c)
 
