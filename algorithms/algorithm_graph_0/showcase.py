@@ -1,24 +1,32 @@
 from matplotlib import pyplot as plt
-from graph import Graph
+from graph import Graphe
 import osmnx as ox
 import numpy as np
 
-G = Graph(address="1 Venelle Artémis, Saint Germain en Laye, France", name='artemis')
+adresse = "Trocadéro, Paris, France"
 
-print("Showing Djikstra search...")
+print("Voici un graphe de l'adresse", adresse)
+
+G = Graphe(adresse=adresse, nom='trocadero')
+
+print("Démonstration de recherche Djikstra...")
 
 G.djikstra(0, animate=True)
 
-print("Showing Node 5")
+print("Voici le noeud 5:")
 
-G.plot_node(5)
-
-plt.show()
-
-print("Showing Path from node 0 to node 443")
-
-G.chemin(0, 443, show=True)
+G.plot_noeud(5)
 
 plt.show()
 
-print("The distance on the shortest path from 7 to 85 is: ", int(G.dist(7, 85)), "meters")
+print("Chemin de 3 a 443 avec A*:")
+
+G.A_star(3, 443, animate=True)
+
+print("Chemin de 12 a 443")
+
+G.chemin(12, 443, show=True)
+
+plt.show()
+
+print("La distance du plus court chemin de 7 a 85 est de ", int(G.dist(7, 85)), "mètres")

@@ -26,10 +26,10 @@ class Graphe:
             G = ox.load_graphml(nom+".gml")
         else:
             if G == None and adresse != None and emplacement == None:
-                G = ox.graph_from_adresse(adresse)
+                G = ox.graph_from_address(adresse)
                 ox.save_graphml(G, nom+".gml")
             elif G == None and adresse == None and emplacement != None:
-                G = ox.graph_from_emplacement(emplacement)
+                G = ox.graph_from_place(emplacement)
                 ox.save_graphml(G, nom+".gml")
             elif G == None and adresse == None and emplacement == None:
                 G = ox.load_graphml(nom+".gml")
@@ -193,13 +193,13 @@ class Graphe:
 
             bkg = ox.plot_graph(self.graphe, ax=ax, show=False)
 
-            step = self.ordre//100
+            step = self.ordre//10
 
             animation = fn_anim(fig,
                         func = self.djikstra_anim,
                         fargs = (x, y, ax, vus_x, vus_y, step),
-                        frames = np.arange(0, len(x)//step, 1),
-                        interval = 0.0001,
+                        frames = np.arange(0, 100, 1),
+                        interval = 200,
                         repeat = False)
             if save:
                 animation.save('djikstra_' + self.nom + '_' + str(sommet) + '.mp4', 
@@ -270,12 +270,12 @@ class Graphe:
 
             bkg = ox.plot_graph(self.graphe, ax=ax, show=False)
 
-            step = self.ordre//100
+            step = self.ordre//30
 
             animation = fn_anim(fig,
                         func = self.A_anim,
                         fargs = (x, y, ax, vus_x, vus_y, step, chemin),
-                        frames = np.arange(0, len(x)//step + step, 1),
+                        frames = np.arange(0, 100, 1),
                         interval = 200,
                         repeat = False)
             if save:
