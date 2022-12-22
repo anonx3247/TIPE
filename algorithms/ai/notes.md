@@ -32,3 +32,23 @@ the overall distance as a loss function.
 This can be built on top of option 1, the idea here is given *n* nodes  at *l* locations and *p* vehicles,
 separate the *n* nodes into *p* groups so as to simplify the voyager problem for each vehicle, and to lower the overall
 distance travelled by each one.
+
+
+The selected method for AI is the MAB or Multi-Armed Bandits model
+
+the state here is identical to the observation and is independent of A: agent actions, and B: previous state.
+
+At any given moment the observation will be defined by an adjacency matrix
+with the distances in any given direction from i to j
+
+The action will be an ordered array of the integers, representing the order to visit them in
+
+Once the model is trained on these graphs, we must determine how to generate the extracted graphs:
+
+1. one option is to directly calculate distances for each tuple of points and generate the graph,
+this will need to be checked however as running A* n^2 times might be very slow in practice
+
+2. the other option is to define the graph heuristically, either directly through euclidean distance, or with
+more granularity, and then to choose the order, finally we only have to run A* on the selected paths given by the AI
+
+Note: we should probably use time as weights however: i.e. distance * average speed.
