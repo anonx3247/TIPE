@@ -52,3 +52,17 @@ this will need to be checked however as running A* n^2 times might be very slow 
 more granularity, and then to choose the order, finally we only have to run A* on the selected paths given by the AI
 
 Note: we should probably use time as weights however: i.e. distance * average speed.
+
+
+### Results
+
+Using the bandit method has been, to say it simply, a disaster.
+
+I will now use a different method:
+
+1. we generate the graph
+2. we choose a random starting node
+3. at each node, the agent must choose which node to pick next, out of all the nodes attached to him
+4. we continue until there is only one node left
+5. we regenerate the graph
+
