@@ -16,7 +16,7 @@ func main() {
 	if e != nil {
 		panic("not a number")
 	}
-	
+
 	handlePath := func(path string, rw string) (*os.File, bool) {
 		created := true
 		_, check := os.Stat(path)
@@ -90,7 +90,6 @@ func MatrixFromCSV(r csv.Reader) (m *Matrix) {
 	return m
 }
 
-//func setParams(grid *Matrix) (trails []Direction, trailsOrig []Direction) {
 func setParams(grid *Matrix) (trails []Direction, c bool) {
 	start := Point{0, 0}
 	addr := grid.Addr()
