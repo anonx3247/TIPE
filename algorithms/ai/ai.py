@@ -61,7 +61,8 @@ class ActionNetwork(network.Network):
         self._output_tensor_spec = output_tensor_spec
         self._sub_layers = [
             tf.keras.layers.Dense(
-                output_tensor_spec.shape.num_elements(), activation=tf.nn.tanh)
+                output_tensor_spec.shape.num_elements(), activation=tf.nn.tanh
+            )
         ]
 
     def call(self, observations, step_type, network_state):

@@ -66,3 +66,11 @@ I will now use a different method:
 4. we continue until there is only one node left
 5. we regenerate the graph
 
+
+### Alternative solution
+
+Given the difficulty is based mainly upon the difficulty of using a non-standard model, let us (in the meantime at least) use a simple ML approach:
+
+1. We generate solutions to many many problems using a optimal algorithm of complexity $O(n^2 2^n)$
+2. We train the model on these problem-solution pairs using normal ML backpropagation
+3. Profit

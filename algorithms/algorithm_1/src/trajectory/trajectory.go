@@ -1,4 +1,4 @@
-package main
+package trajectory
 
 import (
 	"encoding/csv"
@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-const sep int = 2
+const Sep int = 2
 
 var color map[string]int = map[string]int{"traj": 3, "addr": 5, "sep": 9}
 
@@ -17,30 +17,30 @@ var up = Direction{Point{0, -1}, "↑"}
 var down = Direction{Point{0, 1}, "↓"}
 
 type Point struct {
-	x int
-	y int
+	X int
+	Y int
 }
 
 type Direction struct {
 	value Point
-	rep   string
+	Rep   string
 }
 
 type Matrix struct {
-	length int
-	points map[Point]int
+	Length int
+	Points map[Point]int
 }
 
-func blankMatrix(size int) (grid *Matrix) {
+func BlankMatrix(size int) (grid *Matrix) {
 	grid = new(Matrix)
-	grid.points = make(map[Point]int)
-	grid.length = size
+	grid.Points = make(map[Point]int)
+	grid.Length = size
 	positions := make([]Point, 0)
 
 	// fill the positions slice
-	for i := 0; i < size/sep; i++ {
-		for j := 0; j < size/sep; j++ {
-			positions = append(positions, Point{i * sep, j * sep})
+	for i := 0; i < size/Sep; i++ {
+		for j := 0; j < size/Sep; j++ {
+			positions = append(positions, Point{i * Sep, j * Sep})
 
 		}
 	}
@@ -48,28 +48,28 @@ func blankMatrix(size int) (grid *Matrix) {
 }
 
 func (p *Point) move(dir Direction) {
-	p.x += dir.value.x * sep
-	p.y += dir.value.y * sep
+	p.X += dir.value.X * Sep
+	p.Y += dir.value.Y * Sep
 }
 
 func (p Point) dist(p2 Point) (dist float32) {
-	dist = float32(math.Sqrt(float64((p2.x-p.x)*(p2.x-p.x) + (p2.y-p.y)*(p2.y-p.y))))
+	dist = float32(math.Sqrt(float64((p2.X-p.X)*(p2.X-p.X) + (p2.Y-p.Y)*(p2.Y-p.Y))))
 	return
 }
 
 func (m Matrix) Get(p Point) int {
-	return m.points[p]
+	return m.Points[p]
 }
 
 func (m Matrix) Set(p Point, v int) {
-	m.points[p] = v
+	m.Points[p] = v
 }
 
 func (m Matrix) Addr() (addr []Point) {
 	addr = make([]Point, 0)
-	for k, v := range m.points {
+	for k, v := range m.Points {
 		if v == color["addr"] {
-			addr = append(addr, Point{k.x, k.y})
+			addr = append(addr, Point{k.X, k.Y})
 		}
 	}
 	return
@@ -77,7 +77,7 @@ func (m Matrix) Addr() (addr []Point) {
 
 func (m Matrix) MeasureTrajectory() int {
 	t := 0
-	for p := range m.points {
+	for p := range m.Points {
 		if m.Get(p) == color["traj"] || m.Get(p) == color["com"] || m.Get(p) == color["orig"] {
 			t++
 		}
@@ -86,12 +86,12 @@ func (m Matrix) MeasureTrajectory() int {
 }
 
 func (m Matrix) ToList() [][]int {
-	L := make([][]int, m.length)
+	L := make([][]int, m.Length)
 
-	for i := 0; i < m.length; i++ {
-		newline := make([]int, m.length)
+	for i := 0; i < m.Length; i++ {
+		newline := make([]int, m.Length)
 		L[i] = newline
-		for j := 0; j < m.length; j++ {
+		for j := 0; j < m.Length; j++ {
 			L[i][j] = m.Get(Point{j, i}) //for some reason these have to be permuted
 		}
 	}
@@ -100,19 +100,19 @@ func (m Matrix) ToList() [][]int {
 
 func (m Matrix) ToStringList() [][]string {
 	L := m.ToList()
-	S := make([][]string, m.length)
+	S := make([][]string, m.Length)
 
-	for i := 0; i < m.length; i++ {
-		s := make([]string, m.length)
+	for i := 0; i < m.Length; i++ {
+		s := make([]string, m.Length)
 		S[i] = s
-		for j := 0; j < m.length; j++ {
+		for j := 0; j < m.Length; j++ {
 			S[i][j] = strconv.Itoa(L[i][j])
 		}
 	}
 	return S
 }
 
-func visitOrder(start Point, addr []Point) (steps []Point) {
+func VisitOrder(start Point, addr []Point) (steps []Point) {
 	steps = make([]Point, 0)
 	if len(addr) == 0 {
 		return
@@ -127,7 +127,7 @@ func visitOrder(start Point, addr []Point) (steps []Point) {
 		newStart := addr[next]
 		restOfAddr := append(addr[:next], addr[next+1:]...)
 		steps = append(steps, newStart)
-		steps = append(steps, visitOrder(newStart, restOfAddr)...)
+		steps = append(steps, VisitOrder(newStart, restOfAddr)...)
 	}
 	return
 }
@@ -146,12 +146,12 @@ func minimumIndex(list []float32) int {
 }
 
 func trajectory(pos1 Point, pos2 Point) ([]Direction, Point) {
-	dx := (pos2.x - pos1.x) / int(math.Abs(float64(pos2.x-pos1.x)))
+	dx := (pos2.X - pos1.X) / int(math.Abs(float64(pos2.X-pos1.X)))
 	px := Point{dx, 0}
-	dy := (pos2.y - pos1.y) / int(math.Abs(float64(pos2.y-pos1.y)))
+	dy := (pos2.Y - pos1.Y) / int(math.Abs(float64(pos2.Y-pos1.Y)))
 	py := Point{0, dy}
-	lx := int(math.Abs(float64(pos2.x-pos1.x))) / sep
-	ly := int(math.Abs(float64(pos2.y-pos1.y))) / sep
+	lx := int(math.Abs(float64(pos2.X-pos1.X))) / Sep
+	ly := int(math.Abs(float64(pos2.Y-pos1.Y))) / Sep
 	trail := make([]Direction, 0, 2)
 
 	// keeps track of how many directions fail
@@ -188,7 +188,7 @@ func moveOnTrajectory(st_pos Point, trail []Direction) Point {
 	return pos
 }
 
-func (grid Matrix) drawTrajectory(start *Point, trail []Direction) (m Matrix) {
+func (grid Matrix) DrawTrajectory(start *Point, trail []Direction) (m Matrix) {
 	pos := new(Point)
 	*pos = *start
 	length := len(trail)
@@ -211,39 +211,39 @@ func (grid *Matrix) fill(dir Direction, posi *Point, last bool) {
 func (grid *Matrix) fillLength(dir Direction, pos Point, last bool) {
 	switch dir {
 	case right:
-		for i := pos.x; i < pos.x+sep; i++ {
-			p := Point{i, pos.y}
+		for i := pos.X; i < pos.X+Sep; i++ {
+			p := Point{i, pos.Y}
 			grid.Set(p, color["traj"])
 		}
 		if last {
-			p := Point{pos.x + sep, pos.y}
+			p := Point{pos.X + Sep, pos.Y}
 			grid.Set(p, color["traj"])
 		}
 	case left:
-		for i := pos.x - sep; i < pos.x; i++ {
-			p := Point{i, pos.y}
+		for i := pos.X - Sep; i < pos.X; i++ {
+			p := Point{i, pos.Y}
 			grid.Set(p, color["traj"])
 		}
 		if last {
-			p := Point{pos.x - sep - 1, pos.y}
+			p := Point{pos.X - Sep - 1, pos.Y}
 			grid.Set(p, color["traj"])
 		}
 	case down:
-		for i := pos.y; i < pos.y+sep; i++ {
-			p := Point{pos.x, i}
+		for i := pos.Y; i < pos.Y+Sep; i++ {
+			p := Point{pos.X, i}
 			grid.Set(p, color["traj"])
 		}
 		if last {
-			p := Point{pos.x, pos.y + sep}
+			p := Point{pos.X, pos.Y + Sep}
 			grid.Set(p, color["traj"])
 		}
 	case up:
-		for i := pos.y - sep; i < pos.y; i++ {
-			p := Point{pos.x, i}
+		for i := pos.Y - Sep; i < pos.Y; i++ {
+			p := Point{pos.X, i}
 			grid.Set(p, color["traj"])
 		}
 		if last {
-			p := Point{pos.x, pos.y - sep - 1}
+			p := Point{pos.X, pos.Y - Sep - 1}
 			grid.Set(p, color["traj"])
 		}
 	default:
@@ -251,7 +251,7 @@ func (grid *Matrix) fillLength(dir Direction, pos Point, last bool) {
 	}
 }
 
-func trail(ord []Point) (tr []Direction) {
+func Trail(ord []Point) (tr []Direction) {
 	tr = make([]Direction, 0)
 	traj := make([]Direction, len(ord))
 	pos := ord[0]

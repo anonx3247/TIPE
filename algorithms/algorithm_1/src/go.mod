@@ -1,3 +1,3 @@
-module ctrl-z.xyz/traj
+module algorithm_1
 
 go 1.17

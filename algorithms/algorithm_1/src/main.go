@@ -1,6 +1,8 @@
 package main
 
 import (
+	"algorithm_1/generation"
+	"algorithm_1/trajectory"
 	"encoding/csv"
 	"fmt"
 	"os"
@@ -50,9 +52,9 @@ func main() {
 	}
 }
 
-func MatrixFromCSV(r csv.Reader) (m *Matrix) {
-	m = new(Matrix)
-	m.points = make(map[Point]int)
+func MatrixFromCSV(r csv.Reader) (m *trajectory.Matrix) {
+	m = new(trajectory.Matrix)
+	m.Points = make(map[trajectory.Point]int)
 
 	pts, err := r.ReadAll()
 
@@ -60,11 +62,11 @@ func MatrixFromCSV(r csv.Reader) (m *Matrix) {
 		panic(err)
 	}
 
-	m.length = len(pts)
+	m.Length = len(pts)
 
-	for i := 0; i < m.length; i++ {
+	for i := 0; i < m.Length; i++ {
 		for j := 0; j < len(pts[i]); j++ {
-			p := Point{j, i}
+			p := trajectory.Point{j, i}
 			val, err := strconv.Atoi(pts[i][j])
 			if err != nil {
 				panic(fmt.Sprint("improper value:", pts[i][j]))
@@ -75,29 +77,29 @@ func MatrixFromCSV(r csv.Reader) (m *Matrix) {
 	return m
 }
 
-func setParams(grid *Matrix) (trails []Direction) {
-	start := Point{0, 0}
+func setParams(grid *trajectory.Matrix) (trails []trajectory.Direction) {
+	start := trajectory.Point{0, 0}
 	addr := grid.Addr()
-	ord := visitOrder(start, addr)
+	ord := trajectory.VisitOrder(start, addr)
 	printOrder(ord)
-	trails = trail(append([]Point{start}, ord...))
+	trails = trajectory.Trail(append([]trajectory.Point{start}, ord...))
 	printTrails(trails)
 	return
 }
 
-func printTrails(t []Direction) {
+func printTrails(t []trajectory.Direction) {
 	s := "Trail: [ "
 	for _, i := range t {
-		s += fmt.Sprint(i.rep, " ")
+		s += fmt.Sprint(i.Rep, " ")
 	}
 	s += "]"
 	fmt.Println(s)
 }
 
-func printOrder(ord []Point) {
+func printOrder(ord []trajectory.Point) {
 	s := "Order: [ "
 	for _, i := range ord {
-		s += fmt.Sprint("(", i.x, i.y, ") ")
+		s += fmt.Sprint("(", i.X, i.Y, ") ")
 	}
 	s += "]"
 	fmt.Println(s)
@@ -109,7 +111,7 @@ func handleInput(f *os.File, e error, n int) {
 		panic(e)
 	}
 	w3 := csv.NewWriter(f)
-	m := genCity(200, n)
+	m := generation.GenCity(200, n)
 	m.ToCSV(*w3)
 	f.Close()
 }
@@ -129,9 +131,9 @@ func handleOutput(iFile *os.File, iErr error, oFile *os.File, oErr error) {
 	r := csv.NewReader(iFile)
 	w := csv.NewWriter(oFile)
 	grid := MatrixFromCSV(*r)
-	start := Point{0, 0}
+	start := trajectory.Point{0, 0}
 	trails := setParams(grid)
-	grid.drawTrajectory(&start, trails)
+	grid.DrawTrajectory(&start, trails)
 	grid.ToCSV(*w)
-	fmt.Println("Trajectory length:", grid.MeasureTrajectory())
+	fmt.Println("Trajectory Length:", grid.MeasureTrajectory())
 }
