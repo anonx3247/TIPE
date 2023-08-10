@@ -1,7 +1,5 @@
 # Comment livrer le plus de colis en le moins de temps?
 
-#### Anas Lecaillon (MP)
-
 ## Ancrage au thème (24/50)
 
 La livraison est une activité posant de nombreux problèmes: planification, organisation du traffic, adaptation aux différentes zones d'habitation,
